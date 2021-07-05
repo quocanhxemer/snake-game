@@ -22,16 +22,19 @@
 
         .food {
             position: absolute;
+            height: 100px;
+            width: 100px;
             background-color: blue;
         }
     </style>
 </head>
 
 <body>
-    <div id="game-board"> </div>
+    <div id="game-board"></div>
 
     <script>
         const $ = document.querySelector.bind(document);
+        const $$ = document.querySelectorAll.bind(document);
 
         const game = {
             gameBoard: $("#game-board"),
@@ -47,12 +50,13 @@
             currentDirection: "right",
             commandsList: ["right"],
             commandsListLength: 1,
-            interval: 3000,
+            interval: 200,
 
             start() {
                 this.drawGameBoard();
                 this.drawSnake();
                 setInterval(() => {
+                    console.log(this.commandsList, this.commandsListLength)
                     this.moveSnake();
                     this.handleSnakeControl();
                 }, this.interval);
@@ -69,25 +73,28 @@
             newFoodPosition() {
                 return {
                     x: 30,
-                    y: 40
+                    y: 40,
                 };
             },
 
             renderFood() {
                 this.gameBoard.innerHTML += '<div class="food"></div>';
-                console.log(1);
                 foodPosition = this.newFoodPosition();
-                Object.assign($('.food').style, {
+                Object.assign($(".food").style, {
                     width: `${this.snakeWidth}px`,
                     height: `${this.snakeWidth}px`,
                     top: `${foodPosition.y}px`,
-                    left: `${foodPosition.x}px` 
+                    left: `${foodPosition.x}px`,
                 });
+                console.log($('.food'))
             },
 
             drawSnake() {
                 // Clear game board
-                this.gameBoard.innerHTML = '<div class="food"></div>';
+                const oldSnakePart = $$('#game-board > :not(.food)');
+                for (let i = 0; i < oldSnakePart.length; i++) {
+                    oldSnakePart[i].remove();
+                }
 
                 //Draw
                 this.snake.forEach((element, index) => {
