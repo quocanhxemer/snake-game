@@ -49,13 +49,13 @@
             currentDirection: "",
             commandsList: ["right"],
             commandsListLength: 1,
-            interval: 1000,
+            interval: 200,
 
             start() {
                 this.drawGameBoard();
                 this.drawSnake();
                 setInterval(() => {
-                    console.log(this.commandsList, this.commandsListLength)
+                    console.log(this.commandsList, this.commandsListLength);
                     this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
@@ -85,12 +85,12 @@
                     top: `${foodPosition.y}px`,
                     left: `${foodPosition.x}px`,
                 });
-                console.log($('.food'))
+                console.log($(".food"));
             },
 
             drawSnake() {
                 // Clear game board
-                const oldSnakePart = $$('#game-board > :not(.food)');
+                const oldSnakePart = $$("#game-board > :not(.food)");
                 for (let i = 0; i < oldSnakePart.length; i++) {
                     oldSnakePart[i].remove();
                 }
@@ -151,8 +151,12 @@
                         case "ArrowUp":
                         case "w":
                             if (
-                                this.commandsList[this.commandsListLength - 1] !== "down" &&
-                                this.commandsList[this.commandsListLength - 1] !== "up"
+                                (this.commandsListLength &&
+                                    this.commandsList[this.commandsListLength - 1] !== "down" &&
+                                    this.commandsList[this.commandsListLength - 1] !== "up") ||
+                                (!this.commandsListLength &&
+                                    this.currentDirection !== "down" &&
+                                    this.currentDirection !== "up")
                             ) {
                                 this.commandsList.push("up");
                                 this.commandsListLength++;
@@ -161,8 +165,13 @@
                         case "ArrowRight":
                         case "d":
                             if (
-                                this.commandsList[this.commandsListLength - 1] !== "left" &&
-                                this.commandsList[this.commandsListLength - 1] !== "right"
+                                (this.commandsListLength &&
+                                    this.commandsList[this.commandsListLength - 1] !== "left" &&
+                                    this.commandsList[this.commandsListLength - 1] !==
+                                    "right") ||
+                                (!this.commandsListLength &&
+                                    this.currentDirection !== "left" &&
+                                    this.currentDirection !== "right")
                             ) {
                                 this.commandsList.push("right");
                                 this.commandsListLength++;
@@ -171,8 +180,12 @@
                         case "ArrowDown":
                         case "s":
                             if (
-                                this.commandsList[this.commandsListLength - 1] !== "up" &&
-                                this.commandsList[this.commandsListLength - 1] !== "down"
+                                (this.commandsListLength &&
+                                    this.commandsList[this.commandsListLength - 1] !== "down" &&
+                                    this.commandsList[this.commandsListLength - 1] !== "up") ||
+                                (!this.commandsListLength &&
+                                    this.currentDirection !== "down" &&
+                                    this.currentDirection !== "up")
                             ) {
                                 this.commandsList.push("down");
                                 this.commandsListLength++;
@@ -181,8 +194,13 @@
                         case "ArrowLeft":
                         case "a":
                             if (
-                                this.commandsList[this.commandsListLength - 1] !== "right" &&
-                                this.commandsList[this.commandsListLength - 1] !== "left"
+                                (this.commandsListLength &&
+                                    this.commandsList[this.commandsListLength - 1] !== "left" &&
+                                    this.commandsList[this.commandsListLength - 1] !==
+                                    "right") ||
+                                (!this.commandsListLength &&
+                                    this.currentDirection !== "left" &&
+                                    this.currentDirection !== "right")
                             ) {
                                 this.commandsList.push("left");
                                 this.commandsListLength++;
