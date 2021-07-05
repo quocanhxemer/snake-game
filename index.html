@@ -133,6 +133,12 @@
                 if (this.isFoodEaten()) {
                     this.advanceHead();
                     this.snakeLength++;
+
+                    const newFoodPos = this.newFoodPosition();
+                    Object.assign($(".food").style, {
+                        top: newFoodPos.y + 'px',
+                        left: newFoodPos.x + 'px',
+                    });
                 }
             },
 
