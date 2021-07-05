@@ -77,7 +77,7 @@
                     foodY =
                         (Math.random() * (this.gameBoardSize.height - 1)).toFixed() *
                         this.snakeWidth;
-                } while (this.isLegitFoodPosition(foodX, foodY));
+                } while (!this.isLegitFoodPosition(foodX, foodY));
                 return {
                     x: foodX,
                     y: foodY,
