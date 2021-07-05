@@ -37,14 +37,14 @@
             gameBoard: $("#game-board"),
             snake: [{ x: 0, y: 0 }],
             currentDirection: "right",
-            interval: 1000,
+            interval: 200,
 
             start() {
                 this.drawSnake();
                 setInterval(() => {
+                    this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
-                this.handleSnakeControl();
             },
 
             drawSnake() {
@@ -101,19 +101,26 @@
                     switch (event.key) {
                         case 'ArrowUp':
                         case 'w':
-                            this.currentDirection = 'up';
+                            if (this.currentDirection !== 'down') {
+                                this.currentDirection = 'up';
+                            }
                             break;
                         case 'ArrowRight':
-                        case 'd':
+                        case 'd': if (this.currentDirection !== 'left') {
                             this.currentDirection = 'right';
+                        }
                             break;
                         case 'ArrowDown':
                         case 's':
-                            this.currentDirection = 'down';
+                            if (this.currentDirection !== 'up') {
+                                this.currentDirection = 'down';
+                            }
                             break;
                         case 'ArrowLeft':
                         case 'a':
-                            this.currentDirection = 'left';
+                            if (this.currentDirection !== 'right') {
+                                this.currentDirection = 'left';
+                            }
                             break;
                     }
                 })
