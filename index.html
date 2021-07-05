@@ -33,8 +33,10 @@
         const $ = document.querySelector.bind(document);
 
         const game = {
+            snakeWidth: 10,
             gameBoard: $("#game-board"),
             snake: [{ x: 0, y: 0 }],
+            currentDirection: "right",
 
             start() {
                 this.drawSnake();
@@ -43,6 +45,10 @@
             },
 
             drawSnake() {
+                // Clear game board
+                this.gameBoard.innerHTML = '';
+
+                //Draw
                 this.snake.forEach((element, index) => {
                     this.gameBoard.innerHTML += '<div class="snake-part"></div>';
                     const snakePart = $(`.snake-part:nth-child(${index + 1})`);
@@ -52,7 +58,44 @@
                     });
                 });
             },
-            moveSnake() { },
+
+            moveSnake() {
+                const snakeHead = this.snake[0];
+
+                // Direction moving handling
+                switch (this.currentDirection) {
+                    case "up":
+                        this.snake = [
+                            { x: snakeHead.x, y: snakeHead.y - this.snakeWidth },
+                            ...this.snake,
+                        ];
+                        break;
+                    case "right":
+                        this.snake = [
+                            { x: snakeHead.x + this.snakeWidth, y: snakeHead.y },
+                            ...this.snake,
+                        ];
+                        console.log(2);
+                        break;
+                    case "down":
+                        this.snake = [
+                            { x: snakeHead.x, y: snakeHead.y + this.snakeWidth },
+                            ...this.snake,
+                        ];
+                        break;
+                    case "left":
+                        this.snake = [
+                            { x: snakeHead.x - this.snakeWidth, y: snakeHead.y },
+                            ...this.snake,
+                        ];
+                        break;
+                }
+
+                this.snake.pop();
+                console.log(this.snake)
+
+                this.drawSnake();
+            },
             handleSnakeControl() { },
         };
 
