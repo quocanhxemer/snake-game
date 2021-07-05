@@ -55,7 +55,6 @@
                 this.drawGameBoard();
                 this.drawSnake();
                 setInterval(() => {
-                    console.log(this.commandsList, this.commandsListLength);
                     this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
@@ -71,8 +70,8 @@
 
             newFoodPosition() {
                 return {
-                    x: 30,
-                    y: 40,
+                    x: (Math.random() * this.gameBoardSize.width - 1).toFixed() * this.snakeWidth,
+                    y: (Math.random() * this.gameBoardSize.height - 1).toFixed() * this.snakeWidth,
                 };
             },
 
@@ -85,7 +84,6 @@
                     top: `${foodPosition.y}px`,
                     left: `${foodPosition.x}px`,
                 });
-                console.log($(".food"));
             },
 
             drawSnake() {
@@ -102,8 +100,8 @@
                     Object.assign(snakePart.style, {
                         width: `${this.snakeWidth}px`,
                         height: `${this.snakeWidth}px`,
-                        top: `${this.snake[index].y}px`,
-                        left: `${this.snake[index].x}px`,
+                        top: `${element.y}px`,
+                        left: `${element.x}px`,
                     });
                 });
             },
@@ -143,6 +141,28 @@
                         break;
                 }
                 this.drawSnake();
+
+                if (this.isFoodEaten()) {
+                    const food = $(".food");
+                    this.snake = [
+                        {
+                            x: Number(food.style.left.slice(0, -2)),
+                            y: Number(food.style.top.slice(0, -2)),
+                        },
+                        ...this.snake,
+                    ];
+                    this.snakeLength++;
+                }
+            },
+
+            isFoodEaten() {
+                if (
+                    $(".food").style.top === $(".snake-part.id-0").style.top &&
+                    $(".food").style.left === $(".snake-part.id-0").style.left
+                ) {
+                    return true;
+                }
+                return false;
             },
 
             commandsListUpdate() {
