@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake</title>
+    <style>
+        #game-board {
+            height: 120px;
+            width: 200px;
+            background-color: #ccc;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .snake-part {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-board"></div>
+
+    <script>
+        const $ = document.querySelector.bind(document);
+
+        const game = {
+            gameBoard: $("#game-board"),
+            snake: [{ x: 0, y: 0 }],
+
+            start() {
+                this.drawSnake();
+                this.moveSnake();
+                this.handleSnakeControl();
+            },
+
+            drawSnake() {
+                this.snake.forEach((element, index) => {
+                    this.gameBoard.innerHTML += '<div class="snake-part"></div>';
+                    const snakePart = $(`.snake-part:nth-child(${index + 1})`);
+                    Object.assign(snakePart.style, {
+                        top: `${this.snake[index].y}px`,
+                        left: `${this.snake[index].x}px`,
+                    });
+                });
+            },
+            moveSnake() { },
+            handleSnakeControl() { },
+        };
+
+        game.start();
+    </script>
+</body>
+
+</html>
