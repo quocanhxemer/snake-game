@@ -55,6 +55,7 @@
                 this.drawGameBoard();
                 this.drawSnake();
                 setInterval(() => {
+                    console.log(this.snake)
                     this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
@@ -107,51 +108,43 @@
             },
 
             moveSnake() {
-                const snakeHead = this.snake[0];
+                this.advanceHead();
+                this.snake.pop();
+                this.drawSnake();
 
-                // Direction moving handling
+                if (this.isFoodEaten()) {
+                    this.advanceHead();
+                    this.snakeLength++;
+                }
+            },
+
+            advanceHead() {
+                const snakeHead = this.snake[0];
                 switch (this.currentDirection) {
                     case "up":
                         this.snake = [
                             { x: snakeHead.x, y: snakeHead.y - this.snakeWidth },
                             ...this.snake,
                         ];
-                        this.snake.pop();
                         break;
                     case "right":
                         this.snake = [
                             { x: snakeHead.x + this.snakeWidth, y: snakeHead.y },
                             ...this.snake,
                         ];
-                        this.snake.pop();
                         break;
                     case "down":
                         this.snake = [
                             { x: snakeHead.x, y: snakeHead.y + this.snakeWidth },
                             ...this.snake,
                         ];
-                        this.snake.pop();
                         break;
-                    case "left":
+                    default:
                         this.snake = [
                             { x: snakeHead.x - this.snakeWidth, y: snakeHead.y },
                             ...this.snake,
                         ];
-                        this.snake.pop();
                         break;
-                }
-                this.drawSnake();
-
-                if (this.isFoodEaten()) {
-                    const food = $(".food");
-                    this.snake = [
-                        {
-                            x: Number(food.style.left.slice(0, -2)),
-                            y: Number(food.style.top.slice(0, -2)),
-                        },
-                        ...this.snake,
-                    ];
-                    this.snakeLength++;
                 }
             },
 
