@@ -55,7 +55,6 @@
                 this.drawGameBoard();
                 this.drawSnake();
                 setInterval(() => {
-                    console.log(this.snake)
                     this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
@@ -70,10 +69,29 @@
             },
 
             newFoodPosition() {
+                let foodX, foodY;
+                do {
+                    foodX =
+                        (Math.random() * (this.gameBoardSize.width - 1)).toFixed() *
+                        this.snakeWidth;
+                    foodY =
+                        (Math.random() * (this.gameBoardSize.height - 1)).toFixed() *
+                        this.snakeWidth;
+                } while (this.isLegitFoodPosition(foodX, foodY));
                 return {
-                    x: (Math.random() * this.gameBoardSize.width - 1).toFixed() * this.snakeWidth,
-                    y: (Math.random() * this.gameBoardSize.height - 1).toFixed() * this.snakeWidth,
+                    x: foodX,
+                    y: foodY,
                 };
+            },
+
+            isLegitFoodPosition(foodX, foodY) {
+                let check = true;
+                this.snake.forEach((snakePart) => {
+                    if (foodX === snakePart.x && foodY === snakePart.y) {
+                        check = false;
+                    }
+                });
+                return check;
             },
 
             renderFood() {
