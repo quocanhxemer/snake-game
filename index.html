@@ -35,9 +35,10 @@
 
         const game = {
             gameBoard: $("#game-board"),
-            snake: [{ x: 0, y: 0 }],
+            gameBoardSize: { height: 120, width: 200 },
+            snake: [{ x: 20, y: 0 }, { x: 10, y: 0 }, { x: 0, y: 0 }],
             snakeWidth: 10,
-            snakeLength: 1,
+            snakeLength: 3,
             isReadyToTakeCommand: true,
             currentDirection: "right",
             commandsList: ['right'],
@@ -45,11 +46,16 @@
             interval: 200,
 
             start() {
+                this.drawGameBoard();
                 this.drawSnake();
                 setInterval(() => {
                     this.moveSnake();
                     this.handleSnakeControl();
                 }, this.interval);
+            },
+
+            drawGameBoard() {
+
             },
 
             drawSnake() {
