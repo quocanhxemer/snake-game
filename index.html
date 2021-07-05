@@ -46,19 +46,18 @@
             ],
             snakeWidth: 10,
             snakeLength: 3,
-            isReadyToTakeCommand: true,
-            currentDirection: "right",
+            currentDirection: "",
             commandsList: ["right"],
             commandsListLength: 1,
-            interval: 200,
+            interval: 1000,
 
             start() {
                 this.drawGameBoard();
                 this.drawSnake();
                 setInterval(() => {
                     console.log(this.commandsList, this.commandsListLength)
-                    this.moveSnake();
                     this.handleSnakeControl();
+                    this.moveSnake();
                 }, this.interval);
             },
 
@@ -144,8 +143,6 @@
                         break;
                 }
                 this.drawSnake();
-
-                this.isReadyToTakeCommand = true;
             },
 
             commandsListUpdate() {
@@ -197,12 +194,9 @@
 
             handleSnakeControl() {
                 this.commandsListUpdate();
-                if (this.isReadyToTakeCommand) {
-                    if (this.commandsListLength) {
-                        this.currentDirection = this.commandsList.shift();
-                        this.commandsListLength--;
-                    }
-                    this.isReadyToTakeCommand = false;
+                if (this.commandsListLength) {
+                    this.currentDirection = this.commandsList.shift();
+                    this.commandsListLength--;
                 }
             },
         };
