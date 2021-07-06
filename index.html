@@ -66,7 +66,10 @@
 
 <body>
     <div id="score-display">score</div>
-    <button id="quit">QUIT</button>
+    <button id="quit">
+        QUIT
+        (Ctrl + Q)
+    </button>
     <div id="game-board">
         <div id="menu"></div>
     </div>
@@ -107,7 +110,7 @@
 
             init() {
                 this.gameBoard = $("#game-board");
-                this.gameBoardSize = { height: 30, width: 50, };
+                this.gameBoardSize = { height: 30, width: 50 };
                 this.snakeWidth = 20;
                 this.currentDirection = "";
                 this.snake = [{ x: 0, y: 0 }];
@@ -136,10 +139,16 @@
 
             drawGameBoard() {
                 // Somewhat responsive
-                while (this.gameBoardSize.height * this.snakeWidth >= window.innerHeight - 100) {
+                while (
+                    this.gameBoardSize.height * this.snakeWidth >=
+                    window.innerHeight - 100
+                ) {
                     this.gameBoardSize.height--;
                 }
-                while (this.gameBoardSize.width * this.snakeWidth >= window.innerWidth - 100) {
+                while (
+                    this.gameBoardSize.width * this.snakeWidth >=
+                    window.innerWidth - 100
+                ) {
                     this.gameBoardSize.width--;
                 }
 
