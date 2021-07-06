@@ -56,15 +56,16 @@
             position: absolute;
             right: 0;
             left: 0;
+            bottom: 20px;
             text-align: center;
-            margin: 30px;
-            margin-top: 50%;
+            padding-top: 50%;
         }
     </style>
 </head>
 
 <body>
     <div id="score-display">score</div>
+    <button id="quit">QUIT</button>
     <div id="game-board">
         <div id="menu"></div>
     </div>
@@ -82,18 +83,13 @@
         const $$ = document.querySelectorAll.bind(document);
 
         const game = {
-            gameBoard: $("#game-board"),
-            gameBoardSize: { height: 30, width: 50 },
-            snakeWidth: 20,
-            currentDirection: "",
-
             start() {
                 // Prevent scrolling behaviours when pressing arrowkeys
-                document.onkeydown = function (e) {
-                    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                        e.view.event.preventDefault();
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                        event.view.event.preventDefault();
                     }
-                };
+                });
 
                 this.init();
                 this.loadConfig();
@@ -109,15 +105,19 @@
             },
 
             init() {
-                // Clear remaining elements from previous games
-                this.gameBoard.innerHTML = '<div id="menu"> </div>';
-
+                this.gameBoard = $("#game-board");
+                this.gameBoardSize = { height: 30, width: 50, };
+                this.snakeWidth = 20;
+                this.currentDirection = "";
                 this.snake = [{ x: 0, y: 0 }];
                 this.snakeLength = 1;
                 this.isPlaying = true;
                 this.score = 0;
                 this.commandsList = ["right"];
                 this.commandsListLength = 1;
+
+                // Clear remaining elements from previous games
+                this.gameBoard.innerHTML = '<div id="menu"> </div>';
             },
 
             loadConfig() {
@@ -126,7 +126,7 @@
                     ? JSON.parse(data)
                     : {
                         // Default config
-                        interval: 100,
+                        interval: 50,
                         boxMode: true,
                         highScore: 0,
                     };
@@ -134,6 +134,14 @@
             },
 
             drawGameBoard() {
+                // Somewhat responsive
+                while (this.gameBoardSize.height * this.snakeWidth >= window.innerHeight - 100) {
+                    this.gameBoardSize.height--;
+                }
+                while (this.gameBoardSize.width * this.snakeWidth >= window.innerWidth - 100) {
+                    this.gameBoardSize.width--;
+                }
+
                 Object.assign(this.gameBoard.style, {
                     height: `${this.gameBoardSize.height * this.snakeWidth}px`,
                     width: `${this.gameBoardSize.width * this.snakeWidth}px`,
@@ -471,6 +479,16 @@
         };
 
         game.start();
+
+        $("#quit").onclick = () => {
+            game.end();
+        };
+
+        document.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "q") {
+                game.end();
+            }
+        });
     </script>
 </body>
 
