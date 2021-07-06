@@ -56,14 +56,15 @@
             position: absolute;
             right: 0;
             left: 0;
-            bottom: 0;
             text-align: center;
             margin: 30px;
+            margin-top: 50%;
         }
     </style>
 </head>
 
 <body>
+    <div id="score-display">score</div>
     <div id="game-board">
         <div id="menu"></div>
     </div>
@@ -82,16 +83,25 @@
 
         const game = {
             gameBoard: $("#game-board"),
-            gameBoardSize: { height: 12, width: 20 },
-            snakeWidth: 50,
+            gameBoardSize: { height: 30, width: 50 },
+            snakeWidth: 20,
             currentDirection: "",
 
             start() {
+                // Prevent scrolling behaviours when pressing arrowkeys
+                document.onkeydown = function (e) {
+                    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                        e.view.event.preventDefault();
+                    }
+                };
+
                 this.init();
                 this.loadConfig();
+
                 this.drawGameBoard();
                 this.drawSnake();
                 this.handleSnakeControl();
+
                 this.intervalId = setInterval(() => {
                     this.handleSnakeControl();
                     this.moveSnake();
@@ -99,7 +109,9 @@
             },
 
             init() {
+                // Clear remaining elements from previous games
                 this.gameBoard.innerHTML = '<div id="menu"> </div>';
+
                 this.snake = [{ x: 0, y: 0 }];
                 this.snakeLength = 1;
                 this.isPlaying = true;
@@ -113,6 +125,7 @@
                 const config = data
                     ? JSON.parse(data)
                     : {
+                        // Default config
                         interval: 100,
                         boxMode: true,
                         highScore: 0,
@@ -125,11 +138,14 @@
                     height: `${this.gameBoardSize.height * this.snakeWidth}px`,
                     width: `${this.gameBoardSize.width * this.snakeWidth}px`,
                 });
+                this.updateScore();
                 this.renderFood();
             },
 
             renderFood() {
+                // Render food element
                 this.gameBoard.innerHTML += '<div class="food"></div>';
+
                 foodPosition = this.newFoodPosition();
                 if (foodPosition) {
                     Object.assign($(".food").style, {
@@ -144,14 +160,15 @@
             newFoodPosition() {
                 let foodX, foodY;
                 do {
+                    // When there is no space left for food rendering
                     if (
                         this.snakeLength >=
                         this.gameBoardSize.height * this.gameBoardSize.width
                     ) {
                         this.end();
                         return null;
-                        break;
                     }
+
                     foodX =
                         (Math.random() * (this.gameBoardSize.width - 1)).toFixed() *
                         this.snakeWidth;
@@ -159,6 +176,7 @@
                         (Math.random() * (this.gameBoardSize.height - 1)).toFixed() *
                         this.snakeWidth;
                 } while (!this.isLegitFoodPosition(foodX, foodY));
+
                 return {
                     x: foodX,
                     y: foodY,
@@ -173,6 +191,13 @@
                     }
                 });
                 return check;
+            },
+
+            updateScore() {
+                const scoreText = $("#score-display");
+                if (scoreText) {
+                    scoreText.innerText = `Score: ${this.score}`;
+                }
             },
 
             drawSnake() {
@@ -198,14 +223,17 @@
             moveSnake() {
                 this.advanceHead();
                 this.handleCollision();
+
                 if (!this.isPlaying) {
                     return;
                 }
+
                 if (!this.isFoodEaten()) {
                     this.snake.pop();
                 } else {
                     this.snakeLength++;
                     this.score++;
+                    this.updateScore();
 
                     const newFoodPos = this.newFoodPosition();
                     Object.assign($(".food").style, {
@@ -227,6 +255,7 @@
                         if (this.boxMode) {
                             this.end();
                         } else {
+                            // Non-boxmode handling
                             const snakeHead = this.snake[0];
                             if (snakeHead.x >= this.gameBoardSize.width * this.snakeWidth) {
                                 snakeHead.x = 0;
@@ -290,6 +319,7 @@
             isCollided() {
                 const snakeHead = this.snake[0];
                 for (let i = 1; i < this.snakeLength; i++) {
+                    // Snake touches itself
                     if (
                         snakeHead.x === this.snake[i].x &&
                         snakeHead.y === this.snake[i].y
@@ -297,6 +327,8 @@
                         return 1;
                     }
                 }
+
+                // Snakes touches game board edge
                 if (
                     snakeHead.x >= this.gameBoardSize.width * this.snakeWidth ||
                     snakeHead.y >= this.gameBoardSize.height * this.snakeWidth ||
@@ -317,6 +349,7 @@
             },
 
             commandsListUpdate() {
+                // Command list takes new array element only when the new command "makes sense"
                 document.addEventListener("keydown", (event) => {
                     switch (event.key) {
                         case "ArrowUp":
@@ -406,19 +439,20 @@
                     </label>
                     <br />
                     <button id="retry-btn">SAVE AND RETRY</button>
+                    <button id="data-delete">DELETE DATA</button>
                 `;
                 this.handleSettings();
             },
 
             handleSettings() {
-                $("#speed").value = 5000 / this.interval;
+                $("#speed").value = 2000 / this.interval;
                 $("#box-mode").checked = this.boxMode;
 
                 $("#retry-btn").onclick = () => {
                     const config = {
                         interval: Number($("#speed").value)
-                            ? 5000 / Number($("#speed").value)
-                            : 5000,
+                            ? 2000 / Number($("#speed").value)
+                            : 2000,
                         boxMode: $("#box-mode").checked,
                         highScore: this.highScore,
                     };
@@ -427,6 +461,11 @@
 
                     $("#menu").style.display = "none";
                     this.start();
+                };
+
+                $("#data-delete").onclick = () => {
+                    localStorage.removeItem("snake-game");
+                    this.showMenu();
                 };
             },
         };
