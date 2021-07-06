@@ -50,7 +50,7 @@
             commandsList: ["right"],
             commandsListLength: 1,
             boxMode: false,
-            interval: 200,
+            interval: 01000,
 
             start() {
                 this.drawGameBoard();
@@ -136,12 +136,10 @@
             moveSnake() {
                 this.advanceHead();
                 this.handleCollision();
-                this.snake.pop();
-
-                this.drawSnake();
-
-                if (this.isFoodEaten()) {
-                    this.advanceHead();
+                if (!this.isFoodEaten()) {
+                    this.snake.pop();
+                }
+                else {
                     this.snakeLength++;
 
                     const newFoodPos = this.newFoodPosition();
@@ -150,6 +148,8 @@
                         left: newFoodPos.x + "px",
                     });
                 }
+
+                this.drawSnake();
             },
 
             handleCollision() {
