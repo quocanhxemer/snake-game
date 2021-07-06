@@ -71,7 +71,8 @@
     <div id="footer">
         Made by Quốc with luv
         <br />
-        Source code <a style="text-decoration: none;color: #000; font-weight: 600;"
+        Source code
+        <a style="text-decoration: none; color: #000; font-weight: 600"
             href="https://github.com/quocanhxemer/snake-game">here</a>
     </div>
 
@@ -82,13 +83,8 @@
         const game = {
             gameBoard: $("#game-board"),
             gameBoardSize: { height: 12, width: 20 },
-            snake: [{ x: 0, y: 0 }],
             snakeWidth: 50,
-            snakeLength: 1,
             currentDirection: "",
-            boxMode: true,
-            interval: 100,
-            intervalId: 0,
 
             start() {
                 this.init();
@@ -100,7 +96,6 @@
                     this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
-                console.log(this.interval)
             },
 
             init() {
@@ -115,11 +110,14 @@
 
             loadConfig() {
                 const data = localStorage.getItem("snake-game");
-                if (data) {
-                    const config = JSON.parse(data);
-                    this.interval = config.interval;
-                    this.boxMode = config.boxMode;
-                }
+                const config = data
+                    ? JSON.parse(data)
+                    : {
+                        interval: 100,
+                        boxMode: true,
+                        highScore: 0,
+                    };
+                Object.assign(this, config);
             },
 
             drawGameBoard() {
@@ -386,6 +384,8 @@
             end() {
                 clearInterval(this.intervalId);
                 this.isPlaying = false;
+                this.highScore =
+                    this.score > this.highScore ? this.score : this.highScore;
                 this.showMenu();
             },
 
@@ -394,6 +394,7 @@
                 $("#menu").innerHTML = `
                     <h3 class="menu__header">game over</h3>
                     <p class="menu__score">Your score: ${this.score}</p>
+                    <p class="menu__score">High score: ${this.highScore}</p>
                     <p>Game Settings</p>
                     <label for="speed">
                         Speed
@@ -404,20 +405,22 @@
                         <input type="checkbox" name="box-mode" id="box-mode" />
                     </label>
                     <br />
-                    <button id="replay-btn">REPLAY</button>
+                    <button id="retry-btn">SAVE AND RETRY</button>
                 `;
                 this.handleSettings();
             },
 
             handleSettings() {
-                $("#speed").value = 10000 / this.interval;
+                $("#speed").value = 5000 / this.interval;
                 $("#box-mode").checked = this.boxMode;
 
-                $("#replay-btn").onclick = () => {
-                    console.log(!Number($('#speed').value))
+                $("#retry-btn").onclick = () => {
                     const config = {
-                        interval: Number($('#speed').value) ? 10000 / Number($('#speed').value) : 10000,
+                        interval: Number($("#speed").value)
+                            ? 5000 / Number($("#speed").value)
+                            : 5000,
                         boxMode: $("#box-mode").checked,
+                        highScore: this.highScore,
                     };
                     const data = JSON.stringify(config);
                     localStorage.setItem("snake-game", data);
