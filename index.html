@@ -49,13 +49,14 @@
             currentDirection: "",
             commandsList: ["right"],
             commandsListLength: 1,
-            boxMode: false,
-            interval: 01000,
+            boxMode: true,
+            interval: 200,
+            intervalId: 0,
 
             start() {
                 this.drawGameBoard();
                 this.drawSnake();
-                setInterval(() => {
+                this.intervalId = setInterval(() => {
                     this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
@@ -315,7 +316,9 @@
             },
 
             end() {
-                console.log("lose");
+                this.snake.shift();
+                this.drawSnake();
+                clearInterval(this.intervalId)
             },
         };
 
