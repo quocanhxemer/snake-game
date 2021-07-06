@@ -91,16 +91,26 @@
             intervalId: 0,
 
             start() {
-                this.score = 0;
-                this.commandsList = ["right"];
-                this.commandsListLength = 1;
+                this.init();
                 this.loadConfig();
                 this.drawGameBoard();
                 this.drawSnake();
+                this.handleSnakeControl();
                 this.intervalId = setInterval(() => {
                     this.handleSnakeControl();
                     this.moveSnake();
                 }, this.interval);
+                console.log(this.interval)
+            },
+
+            init() {
+                this.gameBoard.innerHTML = '<div id="menu"> </div>';
+                this.snake = [{ x: 0, y: 0 }];
+                this.snakeLength = 1;
+                this.isPlaying = true;
+                this.score = 0;
+                this.commandsList = ["right"];
+                this.commandsListLength = 1;
             },
 
             loadConfig() {
@@ -123,12 +133,14 @@
             renderFood() {
                 this.gameBoard.innerHTML += '<div class="food"></div>';
                 foodPosition = this.newFoodPosition();
-                Object.assign($(".food").style, {
-                    width: `${this.snakeWidth}px`,
-                    height: `${this.snakeWidth}px`,
-                    top: `${foodPosition.y}px`,
-                    left: `${foodPosition.x}px`,
-                });
+                if (foodPosition) {
+                    Object.assign($(".food").style, {
+                        width: `${this.snakeWidth}px`,
+                        height: `${this.snakeWidth}px`,
+                        top: `${foodPosition.y}px`,
+                        left: `${foodPosition.x}px`,
+                    });
+                }
             },
 
             newFoodPosition() {
@@ -139,6 +151,7 @@
                         this.gameBoardSize.height * this.gameBoardSize.width
                     ) {
                         this.end();
+                        return null;
                         break;
                     }
                     foodX =
@@ -187,6 +200,9 @@
             moveSnake() {
                 this.advanceHead();
                 this.handleCollision();
+                if (!this.isPlaying) {
+                    return;
+                }
                 if (!this.isFoodEaten()) {
                     this.snake.pop();
                 } else {
@@ -369,14 +385,8 @@
 
             end() {
                 clearInterval(this.intervalId);
-                this.refreshGame();
+                this.isPlaying = false;
                 this.showMenu();
-            },
-
-            refreshGame() {
-                this.gameBoard.innerHTML = '<div id="menu"> </div>';
-                this.snake = [{ x: 0, y: 0 }];
-                this.snakeLength = 1;
             },
 
             showMenu() {
@@ -400,16 +410,16 @@
             },
 
             handleSettings() {
-                $("#speed").value = 200 - this.interval;
+                $("#speed").value = 10000 / this.interval;
                 $("#box-mode").checked = this.boxMode;
 
                 $("#replay-btn").onclick = () => {
+                    console.log(!Number($('#speed').value))
                     const config = {
-                        interval: 200 - $("#speed").value,
+                        interval: Number($('#speed').value) ? 10000 / Number($('#speed').value) : 10000,
                         boxMode: $("#box-mode").checked,
                     };
                     const data = JSON.stringify(config);
-                    console.log(data);
                     localStorage.setItem("snake-game", data);
 
                     $("#menu").style.display = "none";
