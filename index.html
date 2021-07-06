@@ -457,7 +457,7 @@
                     </label>
                     <br />
                     <button id="retry-btn">SAVE AND RETRY</button>
-                    <button id="data-delete">DELETE DATA</button>
+                    <button id="data-delete">DELETE DATA & RESET DEFAULT</button>
                 `;
                 this.handleSettings();
             },
@@ -483,6 +483,7 @@
 
                 $("#data-delete").onclick = () => {
                     localStorage.removeItem("snake-game");
+                    this.loadConfig();
                     this.showMenu();
                 };
             },
