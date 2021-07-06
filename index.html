@@ -49,6 +49,7 @@
             currentDirection: "",
             commandsList: ["right"],
             commandsListLength: 1,
+            boxMode: false,
             interval: 200,
 
             start() {
@@ -68,9 +69,27 @@
                 this.renderFood();
             },
 
+            renderFood() {
+                this.gameBoard.innerHTML += '<div class="food"></div>';
+                foodPosition = this.newFoodPosition();
+                Object.assign($(".food").style, {
+                    width: `${this.snakeWidth}px`,
+                    height: `${this.snakeWidth}px`,
+                    top: `${foodPosition.y}px`,
+                    left: `${foodPosition.x}px`,
+                });
+            },
+
             newFoodPosition() {
                 let foodX, foodY;
                 do {
+                    if (
+                        this.snakeLength >=
+                        this.gameBoardSize.height * this.gameBoardSize.width
+                    ) {
+                        this.end();
+                        break;
+                    }
                     foodX =
                         (Math.random() * (this.gameBoardSize.width - 1)).toFixed() *
                         this.snakeWidth;
@@ -92,17 +111,6 @@
                     }
                 });
                 return check;
-            },
-
-            renderFood() {
-                this.gameBoard.innerHTML += '<div class="food"></div>';
-                foodPosition = this.newFoodPosition();
-                Object.assign($(".food").style, {
-                    width: `${this.snakeWidth}px`,
-                    height: `${this.snakeWidth}px`,
-                    top: `${foodPosition.y}px`,
-                    left: `${foodPosition.x}px`,
-                });
             },
 
             drawSnake() {
@@ -127,7 +135,9 @@
 
             moveSnake() {
                 this.advanceHead();
+                this.handleCollision();
                 this.snake.pop();
+
                 this.drawSnake();
 
                 if (this.isFoodEaten()) {
@@ -136,9 +146,37 @@
 
                     const newFoodPos = this.newFoodPosition();
                     Object.assign($(".food").style, {
-                        top: newFoodPos.y + 'px',
-                        left: newFoodPos.x + 'px',
+                        top: newFoodPos.y + "px",
+                        left: newFoodPos.x + "px",
                     });
+                }
+            },
+
+            handleCollision() {
+                const collidingStatus = this.isCollided();
+                switch (collidingStatus) {
+                    case 1:
+                        this.end();
+                        break;
+                    case 2:
+                        if (this.boxMode) {
+                            this.end();
+                        } else {
+                            const snakeHead = this.snake[0];
+                            if (snakeHead.x >= this.gameBoardSize.width * this.snakeWidth) {
+                                snakeHead.x = 0;
+                            } else if (
+                                snakeHead.y >=
+                                this.gameBoardSize.height * this.snakeWidth
+                            ) {
+                                snakeHead.y = 0;
+                            } else if (snakeHead.x < 0) {
+                                snakeHead.x = (this.gameBoardSize.width - 1) * this.snakeWidth;
+                            } else if (snakeHead.y < 0) {
+                                snakeHead.y = (this.gameBoardSize.height - 1) * this.snakeWidth;
+                            }
+                        }
+                        break;
                 }
             },
 
@@ -180,6 +218,35 @@
                     return true;
                 }
                 return false;
+            },
+
+            isCollided() {
+                const snakeHead = this.snake[0];
+                for (let i = 1; i < this.snakeLength; i++) {
+                    if (
+                        snakeHead.x === this.snake[i].x &&
+                        snakeHead.y === this.snake[i].y
+                    ) {
+                        return 1;
+                    }
+                }
+                if (
+                    snakeHead.x >= this.gameBoardSize.width * this.snakeWidth ||
+                    snakeHead.y >= this.gameBoardSize.height * this.snakeWidth ||
+                    snakeHead.x < 0 ||
+                    snakeHead.y < 0
+                ) {
+                    return 2;
+                }
+                return 0;
+            },
+
+            handleSnakeControl() {
+                this.commandsListUpdate();
+                if (this.commandsListLength) {
+                    this.currentDirection = this.commandsList.shift();
+                    this.commandsListLength--;
+                }
             },
 
             commandsListUpdate() {
@@ -247,12 +314,8 @@
                 });
             },
 
-            handleSnakeControl() {
-                this.commandsListUpdate();
-                if (this.commandsListLength) {
-                    this.currentDirection = this.commandsList.shift();
-                    this.commandsListLength--;
-                }
+            end() {
+                console.log("lose");
             },
         };
 
