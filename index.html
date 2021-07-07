@@ -32,7 +32,20 @@
         }
 
         #controller-pad {
-            z-index: 19;
+            position: absolute;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .controller-pad__second-row {
+            display: flex;
+        }
+
+        #controller-pad .control {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            background-color: red;
         }
 
         #menu {
@@ -75,10 +88,14 @@
     <div id="game-board">
         <div id="menu"></div>
         <div id="controller-pad">
-            <div class="controll-up">up</div>
-            <div class="controll-left">left</div>
-            <div class="controll-down">down</div>
-            <div class="controll-right">right</div>
+            <div class="controller-pad__first-row">
+                <div class="control up">up</div>
+            </div>
+            <div class="controller-pad__second-row">
+                <div class="control left">left</div>
+                <div class="control down">down</div>
+                <div class="control right">right</div>
+            </div>
         </div>
     </div>
 
@@ -90,10 +107,13 @@
             href="https://github.com/quocanhxemer/snake-game">here</a>
     </div>
 
+    <script src="https://github.com/john-doherty/swiped-events/blob/master/dist/swiped-events.min.js"></script>
     <script>
         const $ = document.querySelector.bind(document);
         const $$ = document.querySelectorAll.bind(document);
-
+        document.addEventListener('swiped', function (e) {
+            alert('swiped');
+        });
         const game = {
             start() {
                 this.init();
@@ -130,7 +150,6 @@
                 this.commandsListLength = 0;
 
                 // Clear remaining elements from previous games
-                // this.gameBoard.innerHTML = '<div id="menu"> </div>';
                 const oldElemets = $$(".snake-part,.food");
                 console.log(oldElemets)
                 for (let i = 0; i < oldElemets.length; i++) {
