@@ -17,13 +17,11 @@ const game = {
   },
 
   init() {
-    // Prevent scrolling behaviours when pressing arrowkeys
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-        event.view.event.preventDefault();
-      }
-    });
-    
+    // Prevent scrolling behaviours
+    window.onscroll = function () {
+      window.scrollTo(0, 0);
+    };
+
     this.gameBoard = $("#game-board");
     this.gameBoardSize = { height: 30, width: 50 };
     this.snakeWidth = 20;
