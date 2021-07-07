@@ -66,10 +66,8 @@
 
 <body>
     <div id="score-display">score</div>
-    <button id="quit">
-        QUIT
-        (Ctrl + Q)
-    </button>
+    <button id="quit-btn">QUIT (Q)</button>
+    <button id="pause-btn">PAUSE (P)</button>
     <div id="game-board">
         <div id="menu"></div>
     </div>
@@ -88,13 +86,6 @@
 
         const game = {
             start() {
-                // Prevent scrolling behaviours when pressing arrowkeys
-                document.addEventListener("keydown", (event) => {
-                    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-                        event.view.event.preventDefault();
-                    }
-                });
-
                 this.init();
                 this.loadConfig();
 
@@ -109,6 +100,13 @@
             },
 
             init() {
+                // Prevent scrolling behaviours when pressing arrowkeys
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                        event.view.event.preventDefault();
+                    }
+                });
+
                 this.gameBoard = $("#game-board");
                 this.gameBoardSize = { height: 30, width: 50 };
                 this.snakeWidth = 20;
@@ -117,17 +115,28 @@
                 this.snakeLength = 1;
                 this.isPlaying = true;
                 this.score = 0;
-                this.commandsList = ["right"];
-                this.commandsListLength = 1;
+                this.isPaused = true;
+                this.commandsList = [];
+                this.commandsListLength = 0;
 
                 // Clear remaining elements from previous games
                 this.gameBoard.innerHTML = '<div id="menu"> </div>';
             },
 
             loadConfig() {
-                const data = localStorage.getItem("snake-game") || '{"interval":50,"boxMode":true,"highScore":0}';
+                const data =
+                    localStorage.getItem("snake-game") ||
+                    // Default config
+                    '{"interval":50,"boxMode":true,"highScore":0,"pauseOnStartup":false}';
                 const config = JSON.parse(data);
                 Object.assign(this, config);
+
+                // Pause on startup handling
+                if (!this.pauseOnStartup) {
+                    this.isPaused = false;
+                    this.commandsList.push("right");
+                    this.commandsListLength++;
+                }
             },
 
             drawGameBoard() {
@@ -148,9 +157,9 @@
                 Object.assign(this.gameBoard.style, {
                     height: `${this.gameBoardSize.height * this.snakeWidth}px`,
                     width: `${this.gameBoardSize.width * this.snakeWidth}px`,
-                    border: this.boxMode ? '5px solid #e75353' : 'none',
+                    border: this.boxMode ? "5px solid #e75353" : "none",
                 });
-                
+
                 this.updateScore();
                 this.renderFood();
             },
@@ -237,7 +246,7 @@
                 this.advanceHead();
                 this.handleCollision();
 
-                if (!this.isPlaying) {
+                if (!this.isPlaying || this.isPaused) {
                     return;
                 }
 
@@ -290,6 +299,10 @@
             },
 
             advanceHead() {
+                if (!this.isPlaying || this.isPaused) {
+                    return;
+                }
+
                 const snakeHead = this.snake[0];
                 switch (this.currentDirection) {
                     case "up":
@@ -310,11 +323,14 @@
                             ...this.snake,
                         ];
                         break;
-                    default:
+                    case "left":
                         this.snake = [
                             { x: snakeHead.x - this.snakeWidth, y: snakeHead.y },
                             ...this.snake,
                         ];
+                        break;
+                    default:
+                        this.isPaused = true;
                         break;
                 }
             },
@@ -358,6 +374,7 @@
                 if (this.commandsListLength) {
                     this.currentDirection = this.commandsList.shift();
                     this.commandsListLength--;
+                    this.isPaused = false;
                 }
             },
 
@@ -435,6 +452,11 @@
                 this.showMenu();
             },
 
+            retry() {
+                this.end();
+                this.start();
+            },
+
             showMenu() {
                 $("#menu").style.display = "block";
                 $("#menu").innerHTML = `
@@ -447,11 +469,15 @@
                         <input type="range" name="speed" id="speed" />
                     </label>
                     <label for="box-mode">
-                        Box Mode
                         <input type="checkbox" name="box-mode" id="box-mode" />
+                        Box Mode
+                    </label>
+                    <label for="pause-startup">
+                        <input type="checkbox" name="pause-startup" id="pause-startup" />
+                        Pause the game on startup
                     </label>
                     <br />
-                    <button id="retry-btn">SAVE AND RETRY</button>
+                    <button id="retry-btn">SAVE AND RETRY (R)</button>
                     <button id="data-delete">DELETE DATA & RESET DEFAULT</button>
                 `;
                 this.handleSettings();
@@ -460,6 +486,7 @@
             handleSettings() {
                 $("#speed").value = 2000 / this.interval;
                 $("#box-mode").checked = this.boxMode;
+                $("#pause-startup").checked = this.pauseOnStartup;
 
                 $("#retry-btn").onclick = () => {
                     const config = {
@@ -468,12 +495,12 @@
                             : 2000,
                         boxMode: $("#box-mode").checked,
                         highScore: this.highScore,
+                        pauseOnStartup: $("#pause-startup").checked,
                     };
                     const data = JSON.stringify(config);
                     localStorage.setItem("snake-game", data);
 
-                    $("#menu").style.display = "none";
-                    this.start();
+                    this.retry();
                 };
 
                 $("#data-delete").onclick = () => {
@@ -486,13 +513,26 @@
 
         game.start();
 
-        $("#quit").onclick = () => {
+        $("#quit-btn").onclick = () => {
             game.end();
         };
 
+        $("#pause-btn").onclick = () => {
+            game.isPaused = !game.isPaused;
+        };
+
+        // Shortcut handling
         document.addEventListener("keydown", (event) => {
-            if (event.ctrlKey && event.key === "q") {
-                game.end();
+            switch (event.key) {
+                case "q":
+                    game.end();
+                    break;
+                case "p":
+                    game.isPaused = !game.isPaused;
+                    break;
+                case "r":
+                    game.retry();
+                    break;
             }
         });
     </script>
