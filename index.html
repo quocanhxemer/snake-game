@@ -370,7 +370,27 @@
             },
 
             handleSnakeControl() {
-                this.commandsListUpdate();
+                document.addEventListener("keydown", (event) => {
+                    switch (event.key) {
+                        case "ArrowUp":
+                        case "w":
+                            this.addCommandsList("up");
+                            break;
+                        case "ArrowRight":
+                        case "d":
+                            this.addCommandsList("right");
+                            break;
+                        case "ArrowDown":
+                        case "s":
+                            this.addCommandsList("down");
+                            break;
+                        case "ArrowLeft":
+                        case "a":
+                            this.addCommandsList("left");
+                            break;
+                    }
+                });
+
                 if (this.commandsListLength) {
                     this.currentDirection = this.commandsList.shift();
                     this.commandsListLength--;
@@ -378,70 +398,62 @@
                 }
             },
 
-            commandsListUpdate() {
+            addCommandsList(command) {
                 // Command list takes new array element only when the new command "makes sense"
-                document.addEventListener("keydown", (event) => {
-                    switch (event.key) {
-                        case "ArrowUp":
-                        case "w":
-                            if (
-                                (this.commandsListLength &&
-                                    this.commandsList[this.commandsListLength - 1] !== "down" &&
-                                    this.commandsList[this.commandsListLength - 1] !== "up") ||
-                                (!this.commandsListLength &&
-                                    this.currentDirection !== "down" &&
-                                    this.currentDirection !== "up")
-                            ) {
-                                this.commandsList.push("up");
-                                this.commandsListLength++;
-                            }
-                            break;
-                        case "ArrowRight":
-                        case "d":
-                            if (
-                                (this.commandsListLength &&
-                                    this.commandsList[this.commandsListLength - 1] !== "left" &&
-                                    this.commandsList[this.commandsListLength - 1] !==
-                                    "right") ||
-                                (!this.commandsListLength &&
-                                    this.currentDirection !== "left" &&
-                                    this.currentDirection !== "right")
-                            ) {
-                                this.commandsList.push("right");
-                                this.commandsListLength++;
-                            }
-                            break;
-                        case "ArrowDown":
-                        case "s":
-                            if (
-                                (this.commandsListLength &&
-                                    this.commandsList[this.commandsListLength - 1] !== "down" &&
-                                    this.commandsList[this.commandsListLength - 1] !== "up") ||
-                                (!this.commandsListLength &&
-                                    this.currentDirection !== "down" &&
-                                    this.currentDirection !== "up")
-                            ) {
-                                this.commandsList.push("down");
-                                this.commandsListLength++;
-                            }
-                            break;
-                        case "ArrowLeft":
-                        case "a":
-                            if (
-                                (this.commandsListLength &&
-                                    this.commandsList[this.commandsListLength - 1] !== "left" &&
-                                    this.commandsList[this.commandsListLength - 1] !==
-                                    "right") ||
-                                (!this.commandsListLength &&
-                                    this.currentDirection !== "left" &&
-                                    this.currentDirection !== "right")
-                            ) {
-                                this.commandsList.push("left");
-                                this.commandsListLength++;
-                            }
-                            break;
-                    }
-                });
+                switch (command) {
+                    case "up":
+                        if (
+                            (this.commandsListLength &&
+                                this.commandsList[this.commandsListLength - 1] !== "down" &&
+                                this.commandsList[this.commandsListLength - 1] !== "up") ||
+                            (!this.commandsListLength &&
+                                this.currentDirection !== "down" &&
+                                this.currentDirection !== "up")
+                        ) {
+                            this.commandsList.push("up");
+                            this.commandsListLength++;
+                        }
+                        break;
+                    case "right":
+                        if (
+                            (this.commandsListLength &&
+                                this.commandsList[this.commandsListLength - 1] !== "left" &&
+                                this.commandsList[this.commandsListLength - 1] !== "right") ||
+                            (!this.commandsListLength &&
+                                this.currentDirection !== "left" &&
+                                this.currentDirection !== "right")
+                        ) {
+                            this.commandsList.push("right");
+                            this.commandsListLength++;
+                        }
+                        break;
+                    case "down":
+                        if (
+                            (this.commandsListLength &&
+                                this.commandsList[this.commandsListLength - 1] !== "down" &&
+                                this.commandsList[this.commandsListLength - 1] !== "up") ||
+                            (!this.commandsListLength &&
+                                this.currentDirection !== "down" &&
+                                this.currentDirection !== "up")
+                        ) {
+                            this.commandsList.push("down");
+                            this.commandsListLength++;
+                        }
+                        break;
+                    case "left":
+                        if (
+                            (this.commandsListLength &&
+                                this.commandsList[this.commandsListLength - 1] !== "left" &&
+                                this.commandsList[this.commandsListLength - 1] !== "right") ||
+                            (!this.commandsListLength &&
+                                this.currentDirection !== "left" &&
+                                this.currentDirection !== "right")
+                        ) {
+                            this.commandsList.push("left");
+                            this.commandsListLength++;
+                        }
+                        break;
+                }
             },
 
             end() {
