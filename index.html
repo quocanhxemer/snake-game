@@ -31,6 +31,10 @@
             background-color: blue;
         }
 
+        #controller-pad {
+            z-index: 19;
+        }
+
         #menu {
             display: none;
             position: absolute;
@@ -70,6 +74,12 @@
     <button id="pause-btn">PAUSE (P)</button>
     <div id="game-board">
         <div id="menu"></div>
+        <div id="controller-pad">
+            <div class="controll-up">up</div>
+            <div class="controll-left">left</div>
+            <div class="controll-down">down</div>
+            <div class="controll-right">right</div>
+        </div>
     </div>
 
     <div id="footer">
@@ -120,7 +130,12 @@
                 this.commandsListLength = 0;
 
                 // Clear remaining elements from previous games
-                this.gameBoard.innerHTML = '<div id="menu"> </div>';
+                // this.gameBoard.innerHTML = '<div id="menu"> </div>';
+                const oldElemets = $$(".snake-part,.food");
+                console.log(oldElemets)
+                for (let i = 0; i < oldElemets.length; i++) {
+                    oldElemets[i].remove();
+                }
             },
 
             loadConfig() {
@@ -466,6 +481,7 @@
 
             retry() {
                 this.end();
+                $("#menu").style.display = "none";
                 this.start();
             },
 
