@@ -125,15 +125,8 @@
             },
 
             loadConfig() {
-                const data = localStorage.getItem("snake-game");
-                const config = data
-                    ? JSON.parse(data)
-                    : {
-                        // Default config
-                        interval: 50,
-                        boxMode: true,
-                        highScore: 0,
-                    };
+                const data = localStorage.getItem("snake-game") || '{"interval":50,"boxMode":true,"highScore":0}';
+                const config = JSON.parse(data);
                 Object.assign(this, config);
             },
 
@@ -155,7 +148,9 @@
                 Object.assign(this.gameBoard.style, {
                     height: `${this.gameBoardSize.height * this.snakeWidth}px`,
                     width: `${this.gameBoardSize.width * this.snakeWidth}px`,
+                    border: this.boxMode ? '5px solid #e75353' : 'none',
                 });
+                
                 this.updateScore();
                 this.renderFood();
             },
