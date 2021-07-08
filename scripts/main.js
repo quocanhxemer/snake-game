@@ -2,6 +2,8 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 const game = {
+  defaultSnakeSize: 20,
+
   start() {
     this.init();
     this.loadConfig();
@@ -19,8 +21,6 @@ const game = {
   init() {
     this.gameBoard = $("#game-board");
     this.gameBoardSize = { height: 0, width: 0 };
-    this.snakeSize = 20;
-    this.defaultSnakeSize = 20;
     this.currentDirection = "";
     this.snake = [{ x: 0, y: 0 }];
     this.snakeLength = 1;
@@ -408,7 +408,7 @@ const game = {
       boxMode: $("#box-mode").checked,
       highScore: this.highScore,
       pauseOnStartup: $("#pause-startup").checked,
-      snakeSize: snakeSizeInput || 20,
+      snakeSize: snakeSizeInput || this.defaultSnakeSize,
     };
     const data = JSON.stringify(config);
     localStorage.setItem("snake-game", data);
