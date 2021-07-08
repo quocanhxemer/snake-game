@@ -19,7 +19,8 @@ const game = {
   init() {
     this.gameBoard = $("#game-board");
     this.gameBoardSize = { height: 0, width: 0 };
-    this.snakeWidth = 20;
+    this.snakeSize = 20;
+    this.defaultSnakeSize = 20;
     this.currentDirection = "";
     this.snake = [{ x: 0, y: 0 }];
     this.snakeLength = 1;
@@ -40,7 +41,7 @@ const game = {
     const data =
       localStorage.getItem("snake-game") ||
       // Default config
-      '{"interval":50,"boxMode":true,"highScore":0,"pauseOnStartup":false}';
+      '{"interval":50,"boxMode":true,"highScore":0,"pauseOnStartup":false,"snakeSize":20}';
     const config = JSON.parse(data);
     Object.assign(this, config);
 
@@ -55,21 +56,24 @@ const game = {
   drawGameBoard() {
     // Somewhat responsive
     while (
-      this.gameBoardSize.height * this.snakeWidth <=
+      this.gameBoardSize.height * this.snakeSize <=
       window.innerHeight - 200
     ) {
       this.gameBoardSize.height++;
     }
     while (
-      this.gameBoardSize.width * this.snakeWidth <=
+      this.gameBoardSize.width * this.snakeSize <=
       window.innerWidth - 50
     ) {
       this.gameBoardSize.width++;
     }
 
+    // Render controller buttons
+    $("#controller-pad").style.display = "block";
+
     Object.assign(this.gameBoard.style, {
-      height: `${this.gameBoardSize.height * this.snakeWidth}px`,
-      width: `${this.gameBoardSize.width * this.snakeWidth}px`,
+      height: `${this.gameBoardSize.height * this.snakeSize}px`,
+      width: `${this.gameBoardSize.width * this.snakeSize}px`,
       border: this.boxMode ? "5px solid #e75353" : "none",
     });
 
@@ -84,8 +88,8 @@ const game = {
     foodPosition = this.newFoodPosition();
     if (foodPosition) {
       Object.assign($(".food").style, {
-        width: `${this.snakeWidth}px`,
-        height: `${this.snakeWidth}px`,
+        width: `${this.snakeSize}px`,
+        height: `${this.snakeSize}px`,
         top: `${foodPosition.y}px`,
         left: `${foodPosition.x}px`,
       });
@@ -106,10 +110,10 @@ const game = {
 
       foodX =
         (Math.random() * (this.gameBoardSize.width - 1)).toFixed() *
-        this.snakeWidth;
+        this.snakeSize;
       foodY =
         (Math.random() * (this.gameBoardSize.height - 1)).toFixed() *
-        this.snakeWidth;
+        this.snakeSize;
     } while (!this.isLegitFoodPosition(foodX, foodY));
 
     return {
@@ -147,8 +151,8 @@ const game = {
       this.gameBoard.innerHTML += `<div class="snake-part id-${index}"></div>`;
       const snakePart = $(`.snake-part.id-${index}`);
       Object.assign(snakePart.style, {
-        width: `${this.snakeWidth}px`,
-        height: `${this.snakeWidth}px`,
+        width: `${this.snakeSize}px`,
+        height: `${this.snakeSize}px`,
         top: `${element.y}px`,
         left: `${element.x}px`,
       });
@@ -192,17 +196,17 @@ const game = {
         } else {
           // Non-boxmode handling
           const snakeHead = this.snake[0];
-          if (snakeHead.x >= this.gameBoardSize.width * this.snakeWidth) {
+          if (snakeHead.x >= this.gameBoardSize.width * this.snakeSize) {
             snakeHead.x = 0;
           } else if (
             snakeHead.y >=
-            this.gameBoardSize.height * this.snakeWidth
+            this.gameBoardSize.height * this.snakeSize
           ) {
             snakeHead.y = 0;
           } else if (snakeHead.x < 0) {
-            snakeHead.x = (this.gameBoardSize.width - 1) * this.snakeWidth;
+            snakeHead.x = (this.gameBoardSize.width - 1) * this.snakeSize;
           } else if (snakeHead.y < 0) {
-            snakeHead.y = (this.gameBoardSize.height - 1) * this.snakeWidth;
+            snakeHead.y = (this.gameBoardSize.height - 1) * this.snakeSize;
           }
         }
         break;
@@ -218,25 +222,25 @@ const game = {
     switch (this.currentDirection) {
       case "up":
         this.snake = [
-          { x: snakeHead.x, y: snakeHead.y - this.snakeWidth },
+          { x: snakeHead.x, y: snakeHead.y - this.snakeSize },
           ...this.snake,
         ];
         break;
       case "right":
         this.snake = [
-          { x: snakeHead.x + this.snakeWidth, y: snakeHead.y },
+          { x: snakeHead.x + this.snakeSize, y: snakeHead.y },
           ...this.snake,
         ];
         break;
       case "down":
         this.snake = [
-          { x: snakeHead.x, y: snakeHead.y + this.snakeWidth },
+          { x: snakeHead.x, y: snakeHead.y + this.snakeSize },
           ...this.snake,
         ];
         break;
       case "left":
         this.snake = [
-          { x: snakeHead.x - this.snakeWidth, y: snakeHead.y },
+          { x: snakeHead.x - this.snakeSize, y: snakeHead.y },
           ...this.snake,
         ];
         break;
@@ -267,8 +271,8 @@ const game = {
 
     // Snakes touches game board edge
     if (
-      snakeHead.x >= this.gameBoardSize.width * this.snakeWidth ||
-      snakeHead.y >= this.gameBoardSize.height * this.snakeWidth ||
+      snakeHead.x >= this.gameBoardSize.width * this.snakeSize ||
+      snakeHead.y >= this.gameBoardSize.height * this.snakeSize ||
       snakeHead.x < 0 ||
       snakeHead.y < 0
     ) {
@@ -389,6 +393,7 @@ const game = {
 
   showMenu() {
     $("#menu").style.display = "block";
+    $("#controller-pad").style.display = "none";
     $("#menu").innerHTML = `
                     <h3 class="menu__header">game over</h3>
                     <p class="menu__score">Your score: ${this.score}</p>
@@ -407,6 +412,14 @@ const game = {
                         Pause the game on startup
                     </label>
                     <br />
+                    Snake size
+                    <input type="radio" name="snake-size" id="snake-size-large" value="30">
+                    <label for="snake-size-large">Large</label>
+                    <input type="radio" name="snake-size" id="snake-size-moderate" value="20">
+                    <label for="snake-size-moderate">Moderate</label>
+                    <input type="radio" name="snake-size" id="snake-size-small" value="10">
+                    <label for="snake-size-small">Small</label>
+                    <br />
                     <button id="retry-btn">SAVE AND RETRY (R)</button>
                     <button id="data-delete">DELETE DATA & RESET DEFAULT</button>
                 `;
@@ -418,7 +431,23 @@ const game = {
     $("#box-mode").checked = this.boxMode;
     $("#pause-startup").checked = this.pauseOnStartup;
 
+    // A bit bulky, might fix later
+    const snakeSizeOptions = document.getElementsByName("snake-size");
+    for (let i = 0; i < snakeSizeOptions.length; i++) {
+      if (snakeSizeOptions[i].value === this.snakeSize + "") {
+        snakeSizeOptions[i].checked = true;
+      }
+    }
+
     $("#retry-btn").onclick = () => {
+      // Get snake size
+      let snakeSizeInput = 0;
+      for (let i = 0; i < snakeSizeOptions.length; i++) {
+        if (snakeSizeOptions[i].checked) {
+          snakeSizeInput = Number(snakeSizeOptions[i].value);
+        }
+      }
+
       const config = {
         interval: Number($("#speed").value)
           ? 2000 / Number($("#speed").value)
@@ -426,6 +455,7 @@ const game = {
         boxMode: $("#box-mode").checked,
         highScore: this.highScore,
         pauseOnStartup: $("#pause-startup").checked,
+        snakeSize: snakeSizeInput || 20,
       };
       const data = JSON.stringify(config);
       localStorage.setItem("snake-game", data);
