@@ -19,7 +19,33 @@
 
     <div id="game-board">
         <div id="menu">
-            
+            <h3 class="menu__header">game over</h3>
+            <p class="menu__score">Your score: <span id="menu__score"></span></p>
+            <p class="menu__score">High score: <span id="menu__high-score"></span></p>
+            <p>Game Settings</p>
+            <label for="speed">
+                Speed
+                <input type="range" name="speed" id="speed" />
+            </label>
+            <label for="box-mode">
+                <input type="checkbox" name="box-mode" id="box-mode" />
+                Box Mode
+            </label>
+            <label for="pause-startup">
+                <input type="checkbox" name="pause-startup" id="pause-startup" />
+                Pause the game on startup
+            </label>
+            <br />
+            Snake size
+            <input type="radio" name="snake-size" id="snake-size-large" value="30">
+            <label for="snake-size-large">Large</label>
+            <input type="radio" name="snake-size" id="snake-size-moderate" value="20">
+            <label for="snake-size-moderate">Moderate</label>
+            <input type="radio" name="snake-size" id="snake-size-small" value="10">
+            <label for="snake-size-small">Small</label>
+            <br />
+            <button id="retry-btn">SAVE AND RETRY (R)</button>
+            <button id="data-delete">DELETE DATA & RESET DEFAULT</button>
         </div>
     </div>
 

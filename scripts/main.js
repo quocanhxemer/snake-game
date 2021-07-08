@@ -385,6 +385,35 @@ const game = {
     this.showMenu();
   },
 
+  save() {
+    // Only save when menu displays (?)
+    if ($("#menu").style.display === "none") {
+      return;
+    }
+
+    // Get snake size
+    // A bit bulky, might fix later
+    const snakeSizeOptions = document.getElementsByName("snake-size");
+    let snakeSizeInput = 0;
+    for (let i = 0; i < snakeSizeOptions.length; i++) {
+      if (snakeSizeOptions[i].checked) {
+        snakeSizeInput = Number(snakeSizeOptions[i].value);
+      }
+    }
+
+    const config = {
+      interval: Number($("#speed").value)
+        ? 2000 / Number($("#speed").value)
+        : 2000,
+      boxMode: $("#box-mode").checked,
+      highScore: this.highScore,
+      pauseOnStartup: $("#pause-startup").checked,
+      snakeSize: snakeSizeInput || 20,
+    };
+    const data = JSON.stringify(config);
+    localStorage.setItem("snake-game", data);
+  },
+
   retry() {
     this.end();
     $("#menu").style.display = "none";
@@ -394,39 +423,13 @@ const game = {
   showMenu() {
     $("#menu").style.display = "block";
     $("#controller-pad").style.display = "none";
-    $("#menu").innerHTML = `
-                    <h3 class="menu__header">game over</h3>
-                    <p class="menu__score">Your score: ${this.score}</p>
-                    <p class="menu__score">High score: ${this.highScore}</p>
-                    <p>Game Settings</p>
-                    <label for="speed">
-                        Speed
-                        <input type="range" name="speed" id="speed" />
-                    </label>
-                    <label for="box-mode">
-                        <input type="checkbox" name="box-mode" id="box-mode" />
-                        Box Mode
-                    </label>
-                    <label for="pause-startup">
-                        <input type="checkbox" name="pause-startup" id="pause-startup" />
-                        Pause the game on startup
-                    </label>
-                    <br />
-                    Snake size
-                    <input type="radio" name="snake-size" id="snake-size-large" value="30">
-                    <label for="snake-size-large">Large</label>
-                    <input type="radio" name="snake-size" id="snake-size-moderate" value="20">
-                    <label for="snake-size-moderate">Moderate</label>
-                    <input type="radio" name="snake-size" id="snake-size-small" value="10">
-                    <label for="snake-size-small">Small</label>
-                    <br />
-                    <button id="retry-btn">SAVE AND RETRY (R)</button>
-                    <button id="data-delete">DELETE DATA & RESET DEFAULT</button>
-                `;
     this.handleSettings();
   },
 
   handleSettings() {
+    $("#menu__score").innerText = this.score;
+    $("#menu__high-score").innerText = this.highScore;
+
     $("#speed").value = 2000 / this.interval;
     $("#box-mode").checked = this.boxMode;
     $("#pause-startup").checked = this.pauseOnStartup;
@@ -440,26 +443,7 @@ const game = {
     }
 
     $("#retry-btn").onclick = () => {
-      // Get snake size
-      let snakeSizeInput = 0;
-      for (let i = 0; i < snakeSizeOptions.length; i++) {
-        if (snakeSizeOptions[i].checked) {
-          snakeSizeInput = Number(snakeSizeOptions[i].value);
-        }
-      }
-
-      const config = {
-        interval: Number($("#speed").value)
-          ? 2000 / Number($("#speed").value)
-          : 2000,
-        boxMode: $("#box-mode").checked,
-        highScore: this.highScore,
-        pauseOnStartup: $("#pause-startup").checked,
-        snakeSize: snakeSizeInput || 20,
-      };
-      const data = JSON.stringify(config);
-      localStorage.setItem("snake-game", data);
-
+      this.save();
       this.retry();
     };
 
@@ -491,6 +475,8 @@ document.addEventListener("keydown", (event) => {
       game.isPaused = !game.isPaused;
       break;
     case "r":
+      game.end();
+      game.save();
       game.retry();
       break;
   }
