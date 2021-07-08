@@ -39,7 +39,7 @@ const game = {
 
   loadConfig() {
     const data =
-      localStorage.getItem("snake-game") ||
+      localStorage.getItem("gameConfig") ||
       // Default config
       '{"interval":50,"boxMode":true,"highScore":0,"pauseOnStartup":false,"snakeSize":20}';
     const config = JSON.parse(data);
@@ -411,7 +411,7 @@ const game = {
       snakeSize: snakeSizeInput || this.defaultSnakeSize,
     };
     const data = JSON.stringify(config);
-    localStorage.setItem("snake-game", data);
+    localStorage.setItem("gameConfig", data);
   },
 
   retry() {
@@ -448,7 +448,7 @@ const game = {
     };
 
     $("#data-delete").onclick = () => {
-      localStorage.removeItem("snake-game");
+      localStorage.removeItem("gameConfig");
       this.loadConfig();
       this.showMenu();
     };
