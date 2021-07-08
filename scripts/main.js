@@ -17,13 +17,8 @@ const game = {
   },
 
   init() {
-    // Prevent scrolling behaviours
-    window.onscroll = function () {
-      window.scrollTo(0, 0);
-    };
-
     this.gameBoard = $("#game-board");
-    this.gameBoardSize = { height: 30, width: 50 };
+    this.gameBoardSize = { height: 0, width: 0 };
     this.snakeWidth = 20;
     this.currentDirection = "";
     this.snake = [{ x: 0, y: 0 }];
@@ -60,16 +55,16 @@ const game = {
   drawGameBoard() {
     // Somewhat responsive
     while (
-      this.gameBoardSize.height * this.snakeWidth >=
-      window.innerHeight - 100
+      this.gameBoardSize.height * this.snakeWidth <=
+      window.innerHeight - 200
     ) {
-      this.gameBoardSize.height--;
+      this.gameBoardSize.height++;
     }
     while (
-      this.gameBoardSize.width * this.snakeWidth >=
-      window.innerWidth - 100
+      this.gameBoardSize.width * this.snakeWidth <=
+      window.innerWidth - 50
     ) {
-      this.gameBoardSize.width--;
+      this.gameBoardSize.width++;
     }
 
     Object.assign(this.gameBoard.style, {
@@ -300,23 +295,6 @@ const game = {
         case "ArrowLeft":
         case "a":
           this.addCommandsList("left");
-          break;
-      }
-    });
-
-    document.addEventListener("swiped", function (event) {
-      switch (event.detail.dir) {
-        case "up":
-          game.addCommandsList("up");
-          break;
-        case "down":
-          game.addCommandsList("down");
-          break;
-        case "right":
-          game.addCommandsList("right");
-          break;
-        case "left":
-          game.addCommandsList("left");
           break;
       }
     });
