@@ -299,6 +299,16 @@ const game = {
       }
     });
 
+    $("#controller-pad").onclick = (event) => {
+      const buttonClicked = event.target.closest(".control");
+      if (!buttonClicked) {
+        return;
+      }
+
+      const direction = buttonClicked.classList[1];
+      this.addCommandsList(direction);
+    };
+
     if (this.commandsListLength) {
       this.currentDirection = this.commandsList.shift();
       this.commandsListLength--;
