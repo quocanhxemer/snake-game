@@ -31,10 +31,11 @@ const game = {
     this.commandsListLength = 0;
 
     // Clear remaining elements from previous games
-    const oldElemets = $$(".snake-part,.food");
+    const oldElemets = $$(".snake-part");
     for (let i = 0; i < oldElemets.length; i++) {
       oldElemets[i].remove();
     }
+    $(".food").style.display = "none";
   },
 
   loadConfig() {
@@ -81,8 +82,8 @@ const game = {
   },
 
   renderFood() {
-    // Render food element
-    this.gameBoard.innerHTML += '<div class="food"></div>';
+    // Display food element
+    $(".food").style.display = "block";
 
     foodPosition = this.newFoodPosition();
     if (foodPosition) {
