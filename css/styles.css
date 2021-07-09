@@ -53,11 +53,10 @@ html {
 }
 
 .food {
-  /* display: none; */
   position: absolute;
-  height: 100px;
-  width: 100px;
-  background-color: blue;
+  color: #970a0a;
+  text-align: center;
+  font-size: 30px;
 }
 
 #menu {

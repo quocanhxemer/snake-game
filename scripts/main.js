@@ -88,8 +88,7 @@ const game = {
     foodPosition = this.newFoodPosition();
     if (foodPosition) {
       Object.assign($(".food").style, {
-        width: `${this.snakeSize}px`,
-        height: `${this.snakeSize}px`,
+        fontSize: `${this.snakeSize}px`,
         top: `${foodPosition.y}px`,
         left: `${foodPosition.x}px`,
       });
