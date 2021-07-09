@@ -280,6 +280,21 @@ const game = {
     return 0;
   },
 
+  isCommandLegit(currentDirection, newCommand) {
+    if (
+      (currentDirection === "up" || currentDirection === "down") &&
+      (newCommand === "up" || newCommand === "down")
+    ) {
+      return false;
+    } else if (
+      (currentDirection === "right" || currentDirection === "left") &&
+      (newCommand === "right" || newCommand === "left")
+    ) {
+      return false;
+    }
+    return true;
+  },
+
   handleSnakeControl() {
     document.addEventListener("keydown", (event) => {
       switch (event.key) {
@@ -312,6 +327,14 @@ const game = {
       this.addCommandsList(direction);
     };
 
+    while (
+      this.commandsListLength &&
+      !this.isCommandLegit(this.currentDirection, this.commandsList[0])
+    ) {
+      this.commandsList.shift();
+      this.commandsListLength--;
+    }
+
     if (this.commandsListLength) {
       this.currentDirection = this.commandsList.shift();
       this.commandsListLength--;
@@ -320,59 +343,22 @@ const game = {
   },
 
   addCommandsList(command) {
-    // Command list takes new array element only when the new command "makes sense"
     switch (command) {
       case "up":
-        if (
-          (this.commandsListLength &&
-            this.commandsList[this.commandsListLength - 1] !== "down" &&
-            this.commandsList[this.commandsListLength - 1] !== "up") ||
-          (!this.commandsListLength &&
-            this.currentDirection !== "down" &&
-            this.currentDirection !== "up")
-        ) {
-          this.commandsList.push("up");
-          this.commandsListLength++;
-        }
+        this.commandsList.push("up");
+        this.commandsListLength++;
         break;
       case "right":
-        if (
-          (this.commandsListLength &&
-            this.commandsList[this.commandsListLength - 1] !== "left" &&
-            this.commandsList[this.commandsListLength - 1] !== "right") ||
-          (!this.commandsListLength &&
-            this.currentDirection !== "left" &&
-            this.currentDirection !== "right")
-        ) {
-          this.commandsList.push("right");
-          this.commandsListLength++;
-        }
+        this.commandsList.push("right");
+        this.commandsListLength++;
         break;
       case "down":
-        if (
-          (this.commandsListLength &&
-            this.commandsList[this.commandsListLength - 1] !== "down" &&
-            this.commandsList[this.commandsListLength - 1] !== "up") ||
-          (!this.commandsListLength &&
-            this.currentDirection !== "down" &&
-            this.currentDirection !== "up")
-        ) {
-          this.commandsList.push("down");
-          this.commandsListLength++;
-        }
+        this.commandsList.push("down");
+        this.commandsListLength++;
         break;
       case "left":
-        if (
-          (this.commandsListLength &&
-            this.commandsList[this.commandsListLength - 1] !== "left" &&
-            this.commandsList[this.commandsListLength - 1] !== "right") ||
-          (!this.commandsListLength &&
-            this.currentDirection !== "left" &&
-            this.currentDirection !== "right")
-        ) {
-          this.commandsList.push("left");
-          this.commandsListLength++;
-        }
+        this.commandsList.push("left");
+        this.commandsListLength++;
         break;
     }
   },
