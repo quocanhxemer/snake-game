@@ -145,11 +145,54 @@ const game = {
     this.snake.forEach((element, index) => {
       this.gameBoard.innerHTML += `<div class="snake-part id-${index}"></div>`;
       const snakePart = $(`.snake-part.id-${index}`);
+
+      // Handle snake border
+      let borderTop = true,
+        borderBottom = true,
+        borderLeft = true,
+        borderRight = true;
+      if (index < this.snakeLength - 1) {
+        if (this.snake[index].x === this.snake[index + 1].x) {
+          if (this.snake[index].y > this.snake[index + 1].y) {
+            borderTop = false;
+          } else {
+            borderBottom = false;
+          }
+        } else {
+          if (this.snake[index].x > this.snake[index + 1].x) {
+            borderLeft = false;
+          } else {
+            borderRight = false;
+          }
+        }
+      }
+      if (index > 0) {
+        if (this.snake[index].x === this.snake[index - 1].x) {
+          if (this.snake[index].y > this.snake[index - 1].y) {
+            borderTop = false;
+          } else {
+            borderBottom = false;
+          }
+        } else {
+          if (this.snake[index].x > this.snake[index - 1].x) {
+            borderLeft = false;
+          } else {
+            borderRight = false;
+          }
+        }
+      }
+
       Object.assign(snakePart.style, {
         width: `${this.snakeSize}px`,
         height: `${this.snakeSize}px`,
         top: `${element.y * this.snakeSize}px`,
         left: `${element.x * this.snakeSize}px`,
+
+        // Draw border
+        borderTopStyle: borderTop ? "solid" : "transparent",
+        borderBottomStyle: borderBottom ? "solid" : "transparent",
+        borderLeftStyle: borderLeft ? "solid" : "transparent",
+        borderRightStyle: borderRight ? "solid" : "transparent",
       });
     });
   },
@@ -320,7 +363,6 @@ const game = {
     if (this.commandsListLength) {
       this.currentDirection = this.commandsList.shift();
       this.commandsListLength--;
-      this.isPaused = false;
     }
   },
 
@@ -343,6 +385,8 @@ const game = {
         this.commandsListLength++;
         break;
     }
+
+    this.isPaused = false;
   },
 
   end() {
