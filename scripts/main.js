@@ -89,8 +89,8 @@ const game = {
     if (foodPosition) {
       Object.assign($(".food").style, {
         fontSize: `${this.snakeSize}px`,
-        top: `${foodPosition.y}px`,
-        left: `${foodPosition.x}px`,
+        top: `${foodPosition.y * this.snakeSize}px`,
+        left: `${foodPosition.x * this.snakeSize}px`,
       });
     }
   },
@@ -107,12 +107,8 @@ const game = {
         return null;
       }
 
-      foodX =
-        (Math.random() * (this.gameBoardSize.width - 1)).toFixed() *
-        this.snakeSize;
-      foodY =
-        (Math.random() * (this.gameBoardSize.height - 1)).toFixed() *
-        this.snakeSize;
+      foodX = Math.floor(Math.random() * this.gameBoardSize.width);
+      foodY = Math.floor(Math.random() * this.gameBoardSize.height);
     } while (!this.isLegitFoodPosition(foodX, foodY));
 
     return {
@@ -152,8 +148,8 @@ const game = {
       Object.assign(snakePart.style, {
         width: `${this.snakeSize}px`,
         height: `${this.snakeSize}px`,
-        top: `${element.y}px`,
-        left: `${element.x}px`,
+        top: `${element.y * this.snakeSize}px`,
+        left: `${element.x * this.snakeSize}px`,
       });
     });
   },
@@ -175,8 +171,8 @@ const game = {
 
       const newFoodPos = this.newFoodPosition();
       Object.assign($(".food").style, {
-        top: newFoodPos.y + "px",
-        left: newFoodPos.x + "px",
+        top: newFoodPos.y * this.snakeSize + "px",
+        left: newFoodPos.x * this.snakeSize + "px",
       });
     }
 
@@ -195,17 +191,14 @@ const game = {
         } else {
           // Non-boxmode handling
           const snakeHead = this.snake[0];
-          if (snakeHead.x >= this.gameBoardSize.width * this.snakeSize) {
+          if (snakeHead.x >= this.gameBoardSize.width) {
             snakeHead.x = 0;
-          } else if (
-            snakeHead.y >=
-            this.gameBoardSize.height * this.snakeSize
-          ) {
+          } else if (snakeHead.y >= this.gameBoardSize.height) {
             snakeHead.y = 0;
           } else if (snakeHead.x < 0) {
-            snakeHead.x = (this.gameBoardSize.width - 1) * this.snakeSize;
+            snakeHead.x = this.gameBoardSize.width - 1;
           } else if (snakeHead.y < 0) {
-            snakeHead.y = (this.gameBoardSize.height - 1) * this.snakeSize;
+            snakeHead.y = this.gameBoardSize.height - 1;
           }
         }
         break;
@@ -220,28 +213,16 @@ const game = {
     const snakeHead = this.snake[0];
     switch (this.currentDirection) {
       case "up":
-        this.snake = [
-          { x: snakeHead.x, y: snakeHead.y - this.snakeSize },
-          ...this.snake,
-        ];
+        this.snake = [{ x: snakeHead.x, y: snakeHead.y - 1 }, ...this.snake];
         break;
       case "right":
-        this.snake = [
-          { x: snakeHead.x + this.snakeSize, y: snakeHead.y },
-          ...this.snake,
-        ];
+        this.snake = [{ x: snakeHead.x + 1, y: snakeHead.y }, ...this.snake];
         break;
       case "down":
-        this.snake = [
-          { x: snakeHead.x, y: snakeHead.y + this.snakeSize },
-          ...this.snake,
-        ];
+        this.snake = [{ x: snakeHead.x, y: snakeHead.y + 1 }, ...this.snake];
         break;
       case "left":
-        this.snake = [
-          { x: snakeHead.x - this.snakeSize, y: snakeHead.y },
-          ...this.snake,
-        ];
+        this.snake = [{ x: snakeHead.x - 1, y: snakeHead.y }, ...this.snake];
         break;
       default:
         this.isPaused = true;
@@ -270,13 +251,14 @@ const game = {
 
     // Snakes touches game board edge
     if (
-      snakeHead.x >= this.gameBoardSize.width * this.snakeSize ||
-      snakeHead.y >= this.gameBoardSize.height * this.snakeSize ||
+      snakeHead.x >= this.gameBoardSize.width ||
+      snakeHead.y >= this.gameBoardSize.height ||
       snakeHead.x < 0 ||
       snakeHead.y < 0
     ) {
       return 2;
     }
+
     return 0;
   },
 
