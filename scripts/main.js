@@ -443,13 +443,16 @@ const game = {
 
 game.start();
 
-$("#quit-btn").onclick = () => {
+$(".quit.btn").onclick = () => {
   game.end();
 };
 
-$("#pause-btn").onclick = () => {
-  game.isPaused = !game.isPaused;
-};
+const pauseToggle = $$(".pause-play.btn");
+for (let i = 0; i < pauseToggle.length; i++) {
+  pauseToggle[i].onclick = () => {
+    game.isPaused = !game.isPaused;
+  };
+}
 
 // Shortcut handling
 document.addEventListener("keydown", (event) => {
