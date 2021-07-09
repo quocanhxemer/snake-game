@@ -48,8 +48,7 @@ const game = {
     // Pause on startup handling
     if (!this.pauseOnStartup) {
       this.isPaused = false;
-      this.commandsList.push("right");
-      this.commandsListLength++;
+      this.currentDirection = "right";
     }
   },
 
@@ -475,7 +474,6 @@ document.addEventListener("keydown", (event) => {
       game.isPaused = !game.isPaused;
       break;
     case "r":
-      game.end();
       game.save();
       game.retry();
       break;
