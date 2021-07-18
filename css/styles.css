@@ -50,7 +50,6 @@ html {
 .snake-part {
   position: absolute;
   background-color: rgb(117, 41, 189);
-  border-width: 1px;
   border-color: #000;
   box-sizing: border-box;
 }

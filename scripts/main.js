@@ -21,9 +21,13 @@ const game = {
   init() {
     this.gameBoard = $("#game-board");
     this.gameBoardSize = { height: 0, width: 0 };
-    this.currentDirection = "";
-    this.snake = [{ x: 0, y: 0 }];
-    this.snakeLength = 1;
+    this.currentDirection = "right";
+    this.snake = [
+      { x: 2, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: 0 },
+    ];
+    this.snakeLength = 3;
     this.isPlaying = true;
     this.score = 0;
     this.isPaused = true;
@@ -49,7 +53,6 @@ const game = {
     // Pause on startup handling
     if (!this.pauseOnStartup) {
       this.isPaused = false;
-      this.currentDirection = "right";
     }
   },
 
@@ -189,6 +192,7 @@ const game = {
         left: `${element.x * this.snakeSize}px`,
 
         // Draw border
+        borderWidth: this.snakeSize / 10 + "px",
         borderTopStyle: borderTop ? "solid" : "transparent",
         borderBottomStyle: borderBottom ? "solid" : "transparent",
         borderLeftStyle: borderLeft ? "solid" : "transparent",
