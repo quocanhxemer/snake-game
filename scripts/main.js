@@ -214,7 +214,7 @@ const game = {
             this.snake.pop();
         } else {
             this.snakeLength++;
-            this.score++;
+            this.score += 2000 / this.interval;
             this.updateScore();
 
             const newFoodPos = this.newFoodPosition();
@@ -387,25 +387,8 @@ const game = {
     },
 
     addCommandsList(command) {
-        switch (command) {
-            case "up":
-                this.commandsList.push("up");
-                this.commandsListLength++;
-                break;
-            case "right":
-                this.commandsList.push("right");
-                this.commandsListLength++;
-                break;
-            case "down":
-                this.commandsList.push("down");
-                this.commandsListLength++;
-                break;
-            case "left":
-                this.commandsList.push("left");
-                this.commandsListLength++;
-                break;
-        }
-
+        this.commandsList.push(command);
+        this.commandsListLength++;
         this.isPaused = false;
     },
 
