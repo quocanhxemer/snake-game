@@ -2,6 +2,8 @@
 
 A simple and fun snake game built using pure HTML, CSS and JavaScript.
 
+Try this game [here](https://quocanhxemer.github.io/snake-game/). Hope you enjoy.
+
 ## How to play:
 ### Desktop:
 Use arrow keys:
@@ -11,5 +13,3 @@ Use arrow keys:
 - ➡️ Move right
 ### Mobile:
 Use the on-screen arrow buttons to control the snake
-
-Try this game [here](https://quocanhxemer.github.io/snake-game/). Hope you enjoy.
